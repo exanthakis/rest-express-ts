@@ -1,18 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "NodeNext",
     "rootDir": "src",
-    "baseUrl": "./",
     "outDir": "dist",
-    "removeComments": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES6",
+    "module": "commonjs",
     "strict": true,
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": true, // force to add type keyword
-    "noEmit": true
+    "removeComments": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
