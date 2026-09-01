@@ -8,6 +8,10 @@ export const googleAuthCredentials = {
   ],
 };
 
+export const db = {
+  MONGO_URI: process.env.MONGO_URI,
+};
+
 export default {
   PORT: Number(process.env.PORT) || 5001,
   NODE_ENV: process.env.NODE_ENV || 'development',

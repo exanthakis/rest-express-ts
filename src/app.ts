@@ -8,7 +8,8 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import config from '@/config';
 import helmet from 'helmet';
-import router from './routes';
+import router from '@/routes';
+import { connectDb, disconnectDb } from '@/libs/mongoose';
 
 const { PORT, NODE_ENV, CLIENT_URL, SESSION_SECRET } = config;
 
@@ -38,6 +39,9 @@ app.use(
 
 (async function (): Promise<void> {
   try {
+    // Connect  Db
+    await connectDb();
+
     // Register routes
     app.use('/api/v1', router);
 
@@ -71,6 +75,7 @@ app.use(
 //  Handle Server graceful shutdown
 const serverTermination = async (signal: NodeJS.Signals): Promise<void> => {
   try {
+    await disconnectDb();
     console.info('Server shutdown', signal);
 
     process.exit(0); // successful termination.
