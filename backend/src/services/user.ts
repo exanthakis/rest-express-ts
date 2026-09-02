@@ -14,4 +14,14 @@ const createUser = async (user: IUser) => {
   }
 };
 
-export { findUser, createUser };
+const findUserById = async (userId: string) => {
+  try {
+    return await User.findById(userId);
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err);
+    console.error(`Error getting user by ID: ${reason}`);
+    return null;
+  }
+};
+
+export { findUser, createUser, findUserById };
