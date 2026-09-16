@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { type Request, type Response } from 'express';
+import { NextFunction, type Request, type Response } from 'express';
 import { oauth2Client } from '@/libs/oauth2Client';
 import common, { googleAuthCredentials } from '@/config';
 import { google } from 'googleapis';
@@ -7,7 +7,7 @@ import { createUser, findUser } from '@/services/user';
 import { IUser } from '@/models/user';
 import { createTokens } from '@/controllers/tokens';
 
-const googleAuth = (req: Request, res: Response) => {
+const googleAuth = (req: Request, res: Response, next: NextFunction) => {
   const state = crypto.randomBytes(32).toString('hex');
 
   req.session.state = state;
@@ -116,7 +116,7 @@ const googleAuthCallback = async (req: Request, res: Response) => {
       maxAge: Number(ACCESS_TOKEN_MAX_AGE),
     });
 
-    res.cookie('refresh_token', access_token, {
+    res.cookie('refresh_token', refresh_token, {
       secure: NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: Number(REFRESH_TOKEN_MAX_AGE),
@@ -132,4 +132,24 @@ const googleAuthCallback = async (req: Request, res: Response) => {
   }
 };
 
-export { googleAuth, googleAuthCallback };
+const logoutHandler = (req: Request, res: Response) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Failed to destroy session:', err);
+
+      return res.status(500).json({
+        message: 'Failed to logout',
+      });
+    }
+
+    res.clearCookie('access_token');
+    res.clearCookie('refresh_token');
+    res.clearCookie('connect.sid');
+
+    return res.status(200).json({
+      message: 'Logged out successfully',
+    });
+  });
+};
+
+export { googleAuth, googleAuthCallback, logoutHandler };
